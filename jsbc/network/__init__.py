@@ -3,11 +3,10 @@ from __future__ import print_function, unicode_literals, division, absolute_impo
 
 import os
 import contextlib
-try:
-    from urllib.request import urlopen, Request
-    from urllib.error import HTTPError, URLError
-except ImportError:
-    from urllib2 import urlopen, Request, HTTPError, URLError
+from jsbc.compat.urllib.urlopen import urlopen
+from jsbc.compat.urllib.Request import Request
+from jsbc.compat.urllib.HTTPError import HTTPError
+from jsbc.compat.urllib.URLError import URLError
 import time
 from jsbc.compat.pickle import pickle as cPickle
 import bz2
