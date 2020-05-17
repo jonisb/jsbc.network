@@ -3,3 +3,5 @@ from __future__ import print_function, unicode_literals, division, absolute_impo
 
 import logging
 logger = logging.getLogger(__name__)
+
+__version__ = '0.0.0'
