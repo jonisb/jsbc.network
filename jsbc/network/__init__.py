@@ -9,10 +9,6 @@ try:
 except ImportError:
     from urllib2 import urlopen, Request, HTTPError, URLError
 import time
-#try:
-#    import cPickle
-#except ImportError:
-#    import pickle as cPickle
 from jsbc.compat.pickle import pickle as cPickle
 import bz2
 
