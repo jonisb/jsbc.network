@@ -62,7 +62,7 @@ def DownloadPage(URL, hdr):
     else:
         try:
             CacheExpire = time.time() + int(next(x for x in Builtins.headers['Cache-Control'].split(',') if 'max-age' in x).split('=')[1])
-        except KeyError:
+        except (KeyError, AttributeError):
             CacheExpire = None
         #Result = {'Code': Builtins.getcode(), 'Page': Actions, 'Cache-Expire': time.time() + int(next(x for x in Builtins.headers['Cache-Control'].split(',') if 'max-age' in x).split('=')[1])}
         Result = {'Code': Builtins.getcode(), 'Page': Actions, 'Cache-Expire': CacheExpire}
@@ -104,7 +104,7 @@ def DownloadURL(URL, force=False, cached=False): # TODO
     else:
         if cached and URL in URLCache:
             Actions = URLCache[URL]
-        elif not force and URL in URLCache and 'Cache-Expire' in URLCache[URL]:
+        elif not force and URL in URLCache and 'Cache-Expire' in URLCache[URL] and URLCache[URL]['Cache-Expire']:
             if time.time() > URLCache[URL]['Cache-Expire']:
                 try:
                     hdr['If-None-Match'] = URLCache[URL]['ETag']
