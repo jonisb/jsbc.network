@@ -10,6 +10,11 @@ from jsbc.compat.urllib.URLError import URLError
 import time
 from jsbc.compat.pickle import pickle as cPickle
 import bz2
+from jsbc.Toolbox import SettingsClass
+try:
+    from urllib.request import build_opener
+except ImportError:
+    from urllib2 import build_opener
 
 import logging
 logger = logging.getLogger(__name__)
@@ -17,7 +22,21 @@ logger = logging.getLogger(__name__)
 __version__ = '0.0.0'
 
 
-def init(settings):
+def DefaultSettings(Data={}):
+    Settings = SettingsClass([
+        ('client', [
+            ('name', __name__),
+            ('cache path', 'cache'),
+            ('network', [
+                ('User-Agent', "{0}/{1} {2}".format(__name__, __version__, build_opener().addheaders[0][1])),
+            ]),
+        ]),
+    ], Data)
+
+    return Settings
+
+
+def init(settings=DefaultSettings()):
     global Settings
     Settings = settings
 

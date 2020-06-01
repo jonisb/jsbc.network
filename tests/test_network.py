@@ -7,3 +7,5 @@ import unittest
 class test_network(unittest.TestCase):
     def test_network(self):
         import jsbc.network
+
+        jsbc.network.init()
