@@ -3,6 +3,7 @@ from __future__ import print_function, unicode_literals, division, absolute_impo
 
 import os
 import contextlib
+from jsbc.compat import *
 from jsbc.compat.urllib.urlopen import urlopen
 from jsbc.compat.urllib.Request import Request
 from jsbc.compat.urllib.HTTPError import HTTPError
@@ -59,7 +60,12 @@ def DownloadPage(URL, hdr):
             print('{0}: Error: Can\'t connect to "{1}".'.format(Settings['client']['name'], URL)) # TODO
             raise
     else:
-        Result = {'Code': Builtins.getcode(), 'Page': Actions, 'Cache-Expire': time.time() + int(next(x for x in Builtins.headers['Cache-Control'].split(',') if 'max-age' in x).split('=')[1])}
+        try:
+            CacheExpire = time.time() + int(next(x for x in Builtins.headers['Cache-Control'].split(',') if 'max-age' in x).split('=')[1])
+        except KeyError:
+            CacheExpire = None
+        #Result = {'Code': Builtins.getcode(), 'Page': Actions, 'Cache-Expire': time.time() + int(next(x for x in Builtins.headers['Cache-Control'].split(',') if 'max-age' in x).split('=')[1])}
+        Result = {'Code': Builtins.getcode(), 'Page': Actions, 'Cache-Expire': CacheExpire}
         try:
             Result['ETag'] = Builtins.headers['ETag']
         except:
