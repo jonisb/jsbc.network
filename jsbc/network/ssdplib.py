@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, unicode_literals, division, absolute_import
 
-import http.client
-import io
 import uuid
 import collections
 import logging
@@ -11,11 +9,6 @@ logger = logging.getLogger(__name__)
 
 address = collections.namedtuple('address', ['host', 'port'])
 ssdpaddr = address('239.255.255.250', 1900)
-
-
-class _FakeSocket(io.BytesIO):
-    def makefile(self, *args, **kw):
-        return self
 
 
 class BASE():
@@ -36,6 +29,23 @@ class BASE():
         return self.__str__().encode('latin-1')
 
 
+def getheaders(headers):
+    try:
+        import http.client
+        import io
+    except ImportError:
+        from mimetools import Message
+        from StringIO import StringIO
+
+        return Message(StringIO(headers))
+
+    class _FakeSocket(io.BytesIO):
+        def makefile(self, *args, **kw):
+            return self
+
+    return http.client.parse_headers(_FakeSocket(headers))
+
+
 class REQUEST(BASE):
     def __init__(self, message=None, addr=None, method='M-SEARCH', path='*', version='HTTP/1.1'):
         if message is not None:
@@ -44,10 +54,10 @@ class REQUEST(BASE):
             self.method, self.path, self.version = self.requestline.split()
             if self.method in ('M-SEARCH', 'NOTIFY'):
                 headers = b"\r\n".join(message[1:])
-                self.headers = http.client.parse_headers(_FakeSocket(headers))
+                self.headers = getheaders(headers)
                 try:
                     self.id = uuid.UUID(self.headers['USN'].split('::')[0])
-                except AttributeError:
+                except (AttributeError, KeyError):
                     self.id = None
             else:
                 raise StopIteration
@@ -74,7 +84,7 @@ class REQUEST(BASE):
 if __name__ == '__main__':
     import pprint
 
-    request = REQUEST()
+    request = REQUEST(bytes(REQUEST()))
 
     print(request)
     print(repr(request))
