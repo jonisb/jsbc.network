@@ -13,7 +13,11 @@ ssdpaddr = address('239.255.255.250', 1900)
 
 class BASE():
     def __str__(self):
-        headers = [self.requestline]
+        try:
+            headers = [self.requestline]
+        except AttributeError:
+            headers = [self.statusline]
+
         #for header in self:
         #    headers.append(f"{header}: {self[header]}")
         for header in self.headers:
@@ -81,6 +85,21 @@ class REQUEST(BASE):
         return self
 
 
+class REPLY(BASE, dict):
+    def __init__(self, message, addr):
+        message = message.rstrip().splitlines()
+        self.statusline = message[0].decode('latin-1')
+        self.version, self.code, self.codemsg = self.statusline.split()
+        if self.code in ('200',):
+            headers = b"\r\n".join(message[1:])
+            self.headers = getheaders(headers)
+            try:
+                self.id = uuid.UUID(self.headers['USN'].split('::')[0])
+            except KeyError:
+                self.id = None
+        self.addr = address(*addr)
+
+
 if __name__ == '__main__':
     import pprint
 
@@ -88,3 +107,16 @@ if __name__ == '__main__':
 
     print(request)
     print(repr(request))
+
+    test_reply = b"""\
+HTTP/1.1 200 OK\r
+CACHE-CONTROL: max-age=120\r
+ST: upnp:rootdevice\r
+USN: uuid:e8d31334-41cd-4a9f-8950-bce16ff38738::upnp:rootdevice\r
+EXT:\r
+SERVER: ASUSTeK UPnP/1.0 MiniUPnPd/1.4\r
+LOCATION: http://192.168.1.1:45701/rootDesc.xml\r
+\r
+"""
+    reply = REPLY(test_reply, ('192.168.1.1', 1900))
+    print(reply)
