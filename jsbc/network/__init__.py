@@ -11,7 +11,7 @@ from jsbc.compat.urllib.URLError import URLError
 import time
 from jsbc.compat.pickle import pickle as cPickle
 import bz2
-from jsbc.Toolbox import SettingsClass
+from jsbc.Toolbox import SettingsClass, settings
 try:
     from urllib.request import build_opener
 except ImportError:
@@ -23,8 +23,8 @@ logger = logging.getLogger(__name__)
 __version__ = '0.0.0'
 
 
-def DefaultSettings(Data={}):
-    Settings = SettingsClass([
+def DefaultSettings(Data=settings):
+    settings = [
         ('client', [
             ('name', __name__),
             ('cache path', 'cache'),
@@ -32,14 +32,17 @@ def DefaultSettings(Data={}):
                 ('User-Agent', "{0}/{1} {2}".format(__name__, __version__, build_opener().addheaders[0][1])),
             ]),
         ]),
-    ], Data)
+    ]
+
+    if isinstance(Data, SettingsClass):
+        Settings = Data
+        Settings.addDefault(settings)
+    else:
+        Settings = SettingsClass(settings)
+
+    Settings.addData(Data)
 
     return Settings
-
-
-def init(settings=DefaultSettings()):
-    global Settings
-    Settings = settings
 
 
 def DownloadPage(URL, hdr):
@@ -133,3 +136,7 @@ def DownloadURL(URL, force=False, cached=False): # TODO
             f.write(bz2.compress(cPickle.dumps(URLCache)))
 
     return Actions['Page']
+
+
+DefaultSettings()
+Settings = settings
