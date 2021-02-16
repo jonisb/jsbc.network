@@ -11,7 +11,7 @@ from jsbc.compat.urllib.URLError import URLError
 import time
 from jsbc.compat.pickle import pickle as cPickle
 import bz2
-from jsbc.Toolbox import SettingsClass, settings
+from jsbc.Toolbox import SettingsClass, DefaultSettings, settings
 try:
     from urllib.request import build_opener
 except ImportError:
