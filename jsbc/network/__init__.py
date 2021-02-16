@@ -22,27 +22,15 @@ logger = logging.getLogger(__name__)
 
 __version__ = '0.0.0'
 
-
-def DefaultSettings(Data=settings):
-    settings = [
-        ('client', [
-            ('name', __name__),
-            ('cache path', 'cache'),
-            ('network', [
-                ('User-Agent', "{0}/{1} {2}".format(__name__, __version__, build_opener().addheaders[0][1])),
-            ]),
+settingsDefaults = [
+    ('client', [
+        ('name', __name__),
+        ('cache path', 'cache'),
+        ('network', [
+            ('User-Agent', "{0}/{1} {2}".format(__name__, __version__, build_opener().addheaders[0][1])),
         ]),
-    ]
-
-    if isinstance(Data, SettingsClass):
-        Settings = Data
-        Settings.addDefault(settings)
-    else:
-        Settings = SettingsClass(settings)
-
-    Settings.addData(Data)
-
-    return Settings
+    ]),
+]
 
 
 def DownloadPage(URL, hdr):
@@ -138,5 +126,5 @@ def DownloadURL(URL, force=False, cached=False): # TODO
     return Actions['Page']
 
 
-DefaultSettings()
+DefaultSettings(settingsDefaults)
 Settings = settings
