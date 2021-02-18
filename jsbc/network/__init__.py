@@ -9,6 +9,7 @@ from jsbc.compat.urllib.Request import Request
 from jsbc.compat.urllib.HTTPError import HTTPError
 from jsbc.compat.urllib.URLError import URLError
 from jsbc.compat.urllib.build_opener import build_opener
+from jsbc.compat.urllib.urlparse import urlparse
 import time
 from jsbc.compat.pickle import pickle as cPickle
 import bz2
@@ -81,10 +82,6 @@ def DownloadURL(URL, force=False, cached=False): # TODO
 
     hdr = {'User-Agent': Settings['client']['network']['User-Agent']}
     SaveCache = False
-    try:
-        from urlparse import urlparse
-    except ImportError:
-        from urllib.parse import urlparse
 
     if urlparse(URL).scheme in ('file', ''):
         with open(urlparse(URL).path, 'rb') as f:
