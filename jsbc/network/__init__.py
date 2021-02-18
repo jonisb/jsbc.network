@@ -8,14 +8,11 @@ from jsbc.compat.urllib.urlopen import urlopen
 from jsbc.compat.urllib.Request import Request
 from jsbc.compat.urllib.HTTPError import HTTPError
 from jsbc.compat.urllib.URLError import URLError
+from jsbc.compat.urllib.build_opener import build_opener
 import time
 from jsbc.compat.pickle import pickle as cPickle
 import bz2
 from jsbc.Toolbox import SettingsClass, DefaultSettings, settings
-try:
-    from urllib.request import build_opener
-except ImportError:
-    from urllib2 import build_opener
 
 import logging
 logger = logging.getLogger(__name__)
