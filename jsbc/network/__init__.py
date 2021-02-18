@@ -115,7 +115,7 @@ def DownloadURL(URL, force=False, cached=False): # TODO
     if SaveCache:
         URLCache[URL] = Actions
         with open(os.path.join(Settings['client']['cache path'], 'URLCache.bz2'), 'wb') as f:
-            f.write(bz2.compress(cPickle.dumps(URLCache)))
+            f.write(bz2.compress(cPickle.dumps(URLCache,2)))
 
     return Actions['Page']
 
