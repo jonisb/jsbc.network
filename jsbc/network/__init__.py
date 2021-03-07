@@ -24,7 +24,7 @@ __version__ = '0.0.0'
 settingsDefaults = [
     ('client', [
         ('name', __name__),
-        ('cache path', pathlib.Path('cache')),
+        ('cache path', '%TEMP%/jsbc.cache'),
         ('network', [
             ('User-Agent', "{0}/{1} {2}".format(__name__, __version__, build_opener().addheaders[0][1])),
         ]),
@@ -74,7 +74,7 @@ def DownloadURL(URL, force=False, cached=False): # TODO
         DownloadURL.URLCache
     except AttributeError:
         try:
-            with (Settings['client']['cache path'] / 'URLCache.bz2').open('rb') as f:
+            with (CachePath / 'URLCache.bz2').open('rb') as f:
                 DownloadURL.URLCache = cPickle.loads(bz2.decompress(f.read()))
         except Exception:
             logger.exception('')
@@ -116,8 +116,8 @@ def DownloadURL(URL, force=False, cached=False): # TODO
 
     if SaveCache:
         URLCache[URL] = Actions
-        settings['client']['cache path'].mkdir(parents=True, exist_ok=True)
-        with (Settings['client']['cache path'] / 'URLCache.bz2').open('wb') as f:
+        CachePath.mkdir(parents=True, exist_ok=True)
+        with (CachePath / 'URLCache.bz2').open('wb') as f:
             f.write(bz2.compress(cPickle.dumps(URLCache,2)))
 
     return Actions['Page']
@@ -125,3 +125,4 @@ def DownloadURL(URL, force=False, cached=False): # TODO
 
 DefaultSettings(settingsDefaults)
 Settings = settings
+CachePath = pathlib.Path(os.path.expandvars(settings['client']['cache path']))
