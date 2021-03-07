@@ -116,6 +116,7 @@ def DownloadURL(URL, force=False, cached=False): # TODO
 
     if SaveCache:
         URLCache[URL] = Actions
+        settings['client']['cache path'].mkdir(parents=True, exist_ok=True)
         with (Settings['client']['cache path'] / 'URLCache.bz2').open('wb') as f:
             f.write(bz2.compress(cPickle.dumps(URLCache,2)))
 
