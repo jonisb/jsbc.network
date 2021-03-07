@@ -57,11 +57,13 @@ def DownloadPage(URL, hdr):
         #Result = {'Code': Builtins.getcode(), 'Page': Actions, 'Cache-Expire': time.time() + int(next(x for x in Builtins.headers['Cache-Control'].split(',') if 'max-age' in x).split('=')[1])}
         Result = {'Code': Builtins.getcode(), 'Page': Actions, 'Cache-Expire': CacheExpire}
         try:
-            Result['ETag'] = Builtins.headers['ETag']
+            if Builtins.headers['ETag'] != None:
+                Result['ETag'] = Builtins.headers['ETag']
         except:
             pass
         try:
-            Result['Last-Modified'] = Builtins.headers['Last-Modified']
+            if Builtins.headers['Last-Modified'] != None:
+                Result['Last-Modified'] = Builtins.headers['Last-Modified']
         except:
             pass
 
