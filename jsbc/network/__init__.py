@@ -49,6 +49,9 @@ def DownloadPage(URL, hdr):
         else:
             print('{0}: Error: Can\'t connect to "{1}".'.format(Settings['client']['name'], URL)) # TODO
             raise
+    except Exception:
+        logger.exception('%s, %s', URL, hdr)
+        raise
     else:
         try:
             CacheExpire = time.time() + int(next(x for x in Builtins.headers['Cache-Control'].split(',') if 'max-age' in x).split('=')[1])
