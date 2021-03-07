@@ -3,7 +3,7 @@ from __future__ import print_function, unicode_literals, division, absolute_impo
 
 import os
 import contextlib
-from jsbc.compat import *
+from jsbc.compat.python3 import *
 from jsbc.compat.urllib.urlopen import urlopen
 from jsbc.compat.urllib.Request import Request
 from jsbc.compat.urllib.HTTPError import HTTPError
@@ -39,7 +39,7 @@ def DownloadPage(URL, hdr):
             encoding = Builtins.headers['content-type'].split('charset=')[-1]
             Actions = Builtins.read()
             try:
-                Actions = unicode(Actions, encoding)
+                Actions = str(Actions, encoding)
             except LookupError:
                 pass
 
