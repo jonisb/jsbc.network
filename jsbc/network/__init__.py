@@ -10,6 +10,7 @@ from jsbc.compat.urllib.HTTPError import HTTPError
 from jsbc.compat.urllib.URLError import URLError
 from jsbc.compat.urllib.build_opener import build_opener
 from jsbc.compat.urllib.urlparse import urlparse
+from jsbc.compat.pathlib import pathlib
 import time
 from jsbc.compat.pickle import pickle as cPickle
 import bz2
@@ -23,7 +24,7 @@ __version__ = '0.0.0'
 settingsDefaults = [
     ('client', [
         ('name', __name__),
-        ('cache path', 'cache'),
+        ('cache path', pathlib.Path('cache')),
         ('network', [
             ('User-Agent', "{0}/{1} {2}".format(__name__, __version__, build_opener().addheaders[0][1])),
         ]),
@@ -73,9 +74,10 @@ def DownloadURL(URL, force=False, cached=False): # TODO
         DownloadURL.URLCache
     except AttributeError:
         try:
-            with open(os.path.join(Settings['client']['cache path'], 'URLCache.bz2'), 'rb') as f:
+            with (Settings['client']['cache path'] / 'URLCache.bz2').open('rb') as f:
                 DownloadURL.URLCache = cPickle.loads(bz2.decompress(f.read()))
-        except IOError:
+        except Exception:
+            logger.exception('')
             DownloadURL.URLCache = {}
     finally:
         URLCache = DownloadURL.URLCache
@@ -114,7 +116,7 @@ def DownloadURL(URL, force=False, cached=False): # TODO
 
     if SaveCache:
         URLCache[URL] = Actions
-        with open(os.path.join(Settings['client']['cache path'], 'URLCache.bz2'), 'wb') as f:
+        with (Settings['client']['cache path'] / 'URLCache.bz2').open('wb') as f:
             f.write(bz2.compress(cPickle.dumps(URLCache,2)))
 
     return Actions['Page']
