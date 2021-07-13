@@ -12,7 +12,7 @@ class test_testing(unittest.TestCase):
         assert request.id == None
         assert request.addr == None
         assert request.requestline == u'M-SEARCH * HTTP/1.1'
-        #assert REQUEST() == {u'st': u'upnp:rootdevice', u'mx': u'3', u'man': u'"ssdp:discover"', u'host': u'239.255.255.250:1900'}
+        assert request == {u'st': u'upnp:rootdevice', u'mx': u'3', u'man': u'"ssdp:discover"', u'host': u'239.255.255.250:1900'}
         assert bytes(request).splitlines()[0] == b'M-SEARCH * HTTP/1.1'
 
     def test_REQUEST_with_data(self):
@@ -20,7 +20,7 @@ class test_testing(unittest.TestCase):
         assert request.id == None
         assert request.addr == None
         assert request.requestline == u'M-SEARCH * HTTP/1.1'
-        #assert request == {u'st': u'upnp:rootdevice', u'mx': u'3', u'man': u'"ssdp:discover"', u'host': u'239.255.255.250:1900'}, repr(request)
+        assert request == {u'st': u'upnp:rootdevice', u'mx': u'3', u'man': u'"ssdp:discover"', u'host': u'239.255.255.250:1900'}
         assert bytes(request).splitlines()[0] == b'M-SEARCH * HTTP/1.1'
 
 
@@ -44,13 +44,7 @@ LOCATION: http://192.168.1.1:45701/rootDesc.xml\r
 
         assert reply.id == uuid.UUID('uuid:e8d31334-41cd-4a9f-8950-bce16ff38738'), reply.id
         assert reply.addr == ('192.168.1.1', 1900)
-        assert reply.headers[u'st'] == u'upnp:rootdevice', repr(reply[u'st'])
-        assert reply.headers[u'usn'] == u'uuid:e8d31334-41cd-4a9f-8950-bce16ff38738::upnp:rootdevice'
-        assert reply.headers[u'server'] == u'ASUSTeK UPnP/1.0 MiniUPnPd/1.4'
-        assert reply.headers[u'location'] == u'http://192.168.1.1:45701/rootDesc.xml'
-        assert reply.headers[u'cache-control'] == u'max-age=120'
-        assert reply.headers[u'ext'] == u'', repr(reply[u'ext'])
-        #assert reply == {u'st': u'upnp:rootdevice', u'usn': u'uuid:e8d31334-41cd-4a9f-8950-bce16ff38738::upnp:rootdevice', u'server': u'ASUSTeK UPnP/1.0 MiniUPnPd/1.4', u'location': u'http://192.168.1.1:45701/rootDesc.xml', u'cache-control': u'max-age=120', u'ext': u''}, repr(reply)
+        assert reply == {u'ST': u'upnp:rootdevice', u'USN': u'uuid:e8d31334-41cd-4a9f-8950-bce16ff38738::upnp:rootdevice', u'SERVER': u'ASUSTeK UPnP/1.0 MiniUPnPd/1.4', u'LOCATION': u'http://192.168.1.1:45701/rootDesc.xml', u'CACHE-CONTROL': u'max-age=120', u'EXT': u''}, repr(reply)
         assert bytes(reply).splitlines()[0] == b'HTTP/1.1 200 OK', bytes(reply)
 
     #def test_ssdplibclass(self):

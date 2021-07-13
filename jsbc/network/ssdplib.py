@@ -18,11 +18,8 @@ class BASE():
         except AttributeError:
             headers = [self.statusline]
 
-        #for header in self:
-        #    headers.append(f"{header}: {self[header]}")
-        for header in self.headers:
-            #headers.append(f"{header}: {self.headers[header]}")
-            headers.append("{0}: {1}".format(header, self.headers[header]))
+        for header in self:
+            headers.append("{0}: {1}".format(header, self[header]))
         return "\r\n".join(headers + ['\r\n'])
 
     def __repr__(self):
@@ -50,7 +47,7 @@ def getheaders(headers):
     return http.client.parse_headers(_FakeSocket(headers))
 
 
-class REQUEST(BASE):
+class REQUEST(BASE, dict):
     def __init__(self, message=None, addr=None, method='M-SEARCH', path='*', version='HTTP/1.1'):
         if message is not None:
             message = message.rstrip().splitlines()
@@ -58,9 +55,9 @@ class REQUEST(BASE):
             self.method, self.path, self.version = self.requestline.split()
             if self.method in ('M-SEARCH', 'NOTIFY'):
                 headers = b"\r\n".join(message[1:])
-                self.headers = getheaders(headers)
+                self.update(getheaders(headers))
                 try:
-                    self.id = uuid.UUID(self.headers['USN'].split('::')[0])
+                    self.id = uuid.UUID(self['USN'].split('::')[0])
                 except (AttributeError, KeyError):
                     self.id = None
             else:
@@ -79,9 +76,8 @@ class REQUEST(BASE):
         except TypeError:
             self.addr = None
 
-        #self.headers = {'st': f'{library}:{service}', 'mx': mx, 'man': '"ssdp:discover"', 'host': f'{host}:{port}'}
-        self.headers = {'st': '{0}:{1}'.format(library, service), 'mx': mx, 'man': '"ssdp:discover"', 'host': '{0}:{1}'.format(host, port)}
     def build(self, service='rootdevice', library='upnp', host=ssdpaddr.host, port=ssdpaddr.port, mx='3'):
+        self.update({'st': '{0}:{1}'.format(library, service), 'mx': mx, 'man': '"ssdp:discover"', 'host': '{0}:{1}'.format(host, port)})
         return self
 
 
@@ -92,9 +88,9 @@ class REPLY(BASE, dict):
         self.version, self.code, self.codemsg = self.statusline.split()
         if self.code in ('200',):
             headers = b"\r\n".join(message[1:])
-            self.headers = getheaders(headers)
+            self.update(getheaders(headers))
             try:
-                self.id = uuid.UUID(self.headers['USN'].split('::')[0])
+                self.id = uuid.UUID(self['USN'].split('::')[0])
             except KeyError:
                 self.id = None
         self.addr = address(*addr)
