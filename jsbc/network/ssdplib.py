@@ -79,9 +79,9 @@ class REQUEST(BASE):
         except TypeError:
             self.addr = None
 
-    def build(self, service='rootdevice', library='upnp', host=ssdpaddr.host, port=ssdpaddr.port, mx=3):
         #self.headers = {'st': f'{library}:{service}', 'mx': mx, 'man': '"ssdp:discover"', 'host': f'{host}:{port}'}
         self.headers = {'st': '{0}:{1}'.format(library, service), 'mx': mx, 'man': '"ssdp:discover"', 'host': '{0}:{1}'.format(host, port)}
+    def build(self, service='rootdevice', library='upnp', host=ssdpaddr.host, port=ssdpaddr.port, mx='3'):
         return self
 
 
